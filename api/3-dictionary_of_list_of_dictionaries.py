@@ -1,11 +1,18 @@
 #!/usr/bin/python3
+"""
+This module contains a script that fetches tasks for all employees using
+the JSONPlaceholder API and exports them to a
+JSON file formatted by employee ID.
+"""
+
 import json
 import requests
 
 
 def export_all_tasks():
-    """Exports tasks for all employees to a
-    JSON file using JSONPlaceholder API."""
+    """
+    Exports tasks for all employees to a JSON file.
+    """
     users_url = 'https://jsonplaceholder.typicode.com/users'
     todos_url = 'https://jsonplaceholder.typicode.com/todos'
 
@@ -20,9 +27,9 @@ def export_all_tasks():
         for user in users:
             user_id = user['id']
             user_tasks[user_id] = [{
-                "username": user['username'],
-                "task": task['title'],
-                "completed": task['completed']
+                'username': user['username'],
+                'task': task['title'],
+                'completed': task['completed']
             } for task in todos if task['userId'] == user_id]
 
         with open('todo_all_employees.json', 'w') as jsonfile:

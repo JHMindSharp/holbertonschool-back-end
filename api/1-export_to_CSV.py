@@ -1,11 +1,27 @@
 #!/usr/bin/python3
+"""
+This module contains a script that uses the JSONPlaceholder API to fetch tasks
+for a given employee and exports them to a CSV file.
+"""
+
 import csv
 import requests
 import sys
 
 
 def export_to_csv(employee_id):
-    """Exports employee tasks to a CSV file using JSONPlaceholder API."""
+    """
+    Exports tasks for a given employee ID to a CSV file.
+
+    Args:
+        employee_id (int): The employee ID for which to fetch tasks.
+    """
+    try:
+        employee_id = int(employee_id)
+    except ValueError:
+        print("Error: Employee ID must be an integer.")
+        return
+
     user_url = (
         f'https://jsonplaceholder.typicode.com/users/{employee_id}')
     todos_url = (
@@ -19,10 +35,18 @@ def export_to_csv(employee_id):
         todos = todos_response.json()
 
         with open(f'{employee_id}.csv', 'w', newline='') as csvfile:
-            task_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+            fieldnames = ['USER_ID', 'USERNAME',
+                          'TASK_COMPLETED_STATUS', 'TASK_TITLE']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames,
+                                    quoting=csv.QUOTE_ALL)
+
             for task in todos:
-                task_writer.writerow([employee_id, user['username'],
-                                      task['completed'], task['title']])
+                writer.writerow({
+                    'USER_ID': employee_id,
+                    'USERNAME': user.get('username'),
+                    'TASK_COMPLETED_STATUS': task.get('completed'),
+                    'TASK_TITLE': task.get('title')
+                })
 
 
 if __name__ == "__main__":

@@ -1,10 +1,27 @@
 #!/usr/bin/python3
+"""
+This module fetches the TODO list for a given employee from JSONPlaceholder API
+and displays their progress.
+"""
+
 import requests
 import sys
 
 
 def fetch_todo_list(employee_id):
-    """Fetch TODO list for a given employee ID using JSONPlaceholder API."""
+    """
+    Fetches the TODO list for a given employee ID using JSONPlaceholder API
+    and prints the progress.
+
+    Args:
+        employee_id (int): The ID of the employee to query.
+    """
+    try:
+        employee_id = int(employee_id)  # Convert employee ID to integer
+    except ValueError:
+        print("Error: Employee ID must be an integer.")
+        return
+
     user_url = (
         f'https://jsonplaceholder.typicode.com/users/{employee_id}')
     todos_url = (
@@ -17,14 +34,13 @@ def fetch_todo_list(employee_id):
         user = user_response.json()
         todos = todos_response.json()
 
-        completed_tasks = [task for task in todos if task['completed']]
+        completed_tasks = [task for task in todos if task.get('completed')]
         total_tasks = len(todos)
 
-        progress_msg = (f"Employee {user['name']} is done with tasks"
-                        f"({len(completed_tasks)}/{total_tasks}):")
-        print(progress_msg)
+        print(f"Employee {user.get('name', 'Unknown')} is done with tasks"
+              f"({len(completed_tasks)}/{total_tasks}):")
         for task in completed_tasks:
-            print(f"\t {task['title']}")
+            print(f"\t {task.get('title')}")
 
 
 if __name__ == "__main__":
